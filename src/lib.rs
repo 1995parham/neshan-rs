@@ -61,13 +61,13 @@ pub struct Leg {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Distance {
-    pub value: u64,
+    pub value: f64,
     pub text: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Duration {
-    pub value: u64,
+    pub value: f64,
     pub text: String,
 }
 
@@ -145,7 +145,7 @@ impl Client {
 mod tests {
     #[tokio::test]
     async fn request() {
-        let client = super::Client::new("service.jd3J9YLeP2OWuRYPPbXlqgdoMqEIm38G5DaN50WN");
+        let client = super::Client::new("service.XzI8u04rz0BP19WwNJmjKqEc5gCwtEgqdYzIZEaz");
         let routes = client
             .route(
                 super::Type::Car,
