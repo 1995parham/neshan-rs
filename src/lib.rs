@@ -8,6 +8,30 @@ pub struct Client {
     client: reqwest::Client,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Error {
+    code: i32,
+    message: String,
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl std::error::Error for Error {}
+
+impl fmt::Debug for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "AppError {{ code: {}, message: {} }}",
+            self.code, self.message
+        )
+    }
+}
+
 pub struct Point {
     pub longitude: f64,
     pub latitude: f64,
@@ -103,8 +127,13 @@ impl Client {
                 ("alternative", alternative_paths.to_string()),
             ])
             .send()
-            .await?
-            .error_for_status()?;
+            .await?;
+
+        if !res.status().is_success() {
+            let err = res.json::<Error>().await?;
+
+            return Err(Box::new(err));
+        }
 
         let routes = res.json::<Routes>().await?;
 
