@@ -2,8 +2,8 @@ use reqwest::header;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
-/// Neshan client.
-/// https://platform.neshan.org/api/getting-started
+/// Neshan client based on its api documentation.
+/// <https://platform.neshan.org/api/getting-started>
 pub struct Client {
     client: reqwest::Client,
 }
@@ -59,12 +59,14 @@ pub struct Leg {
     pub distance: Distance,
 }
 
+/// distance from origin to destination in persian text form and meter.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Distance {
     pub value: f64,
     pub text: String,
 }
 
+/// distance from origin to destination in persian text form and seconds.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Duration {
     pub value: f64,
