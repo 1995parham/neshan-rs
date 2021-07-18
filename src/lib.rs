@@ -147,7 +147,9 @@ impl Client {
 mod tests {
     #[tokio::test]
     async fn request() {
-        let client = super::Client::new("service.XzI8u04rz0BP19WwNJmjKqEc5gCwtEgqdYzIZEaz");
+        let api_key = std::env::var("NESHAN_RS_API_KEY").unwrap();
+
+        let client = super::Client::new(&api_key);
         let routes = client
             .route(
                 super::Type::Car,
