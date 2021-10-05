@@ -1,6 +1,6 @@
 # neshan-rs
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/1995parham/neshan.rs/ci?label=ci&logo=github&style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/1995parham/neshan-rs/ci?label=ci&logo=github&style=flat-square)
 
 ## Introduction
 
