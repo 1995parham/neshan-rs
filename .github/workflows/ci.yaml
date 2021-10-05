@@ -1,7 +1,12 @@
 ---
 name: ci
+
 on:
   - push
+
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   test:
     name: test
@@ -24,6 +29,7 @@ jobs:
         env:
           NESHAN_RS_API_KEY: ${{ secrets.API_KEY }}
         run: cargo test
+
   release:
     name: release
     runs-on: ubuntu-latest
