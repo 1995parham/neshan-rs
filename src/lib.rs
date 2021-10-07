@@ -59,6 +59,19 @@ pub struct Leg {
     pub distance: Distance,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PostalAddress {
+    pub formatted_address: String,
+    pub route_name: String,
+    pub neighbourhood: Option<String>,
+    pub city: String,
+    pub state: String,
+    pub place: Option<String>,
+    pub municipality_zone: Option<String>,
+    pub in_traffic_zone: bool,
+    pub in_odd_even_zone: bool,
+}
+
 /// distance from origin to destination in persian text form and meter.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Distance {
@@ -141,12 +154,39 @@ impl Client {
 
         Ok(routes)
     }
+
+    /// find postal address for the given point.
+    /// https://platform.neshan.org/api/reverse-geocoding
+    pub async fn reverse_geocode(
+        &self,
+        point: Point,
+    ) -> Result<PostalAddress, Box<dyn std::error::Error>> {
+        let res = self
+            .client
+            .get("https://api.neshan.org/v2/reverse")
+            .query(&[
+                ("lat", point.latitude.to_string()),
+                ("lng", point.longitude.to_string()),
+            ])
+            .send()
+            .await?;
+
+        if !res.status().is_success() {
+            let err = res.json::<Error>().await?;
+
+            return Err(Box::new(err));
+        }
+
+        let postal_address = res.json::<PostalAddress>().await?;
+
+        Ok(postal_address)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     #[tokio::test]
-    async fn request() {
+    async fn routes() {
         let api_key = std::env::var("NESHAN_RS_API_KEY").unwrap();
 
         let client = super::Client::new(&api_key);
@@ -169,5 +209,25 @@ mod tests {
             .unwrap();
 
         println!("{:?}", routes);
+    }
+
+    #[tokio::test]
+    async fn reverse_geocode() {
+        let api_key = std::env::var("NESHAN_RS_API_KEY").unwrap();
+
+        let client = super::Client::new(&api_key);
+        let postal_address = client
+            .reverse_geocode(super::Point {
+                latitude: 35.731984409609694,
+                longitude: 51.392684661470156,
+            })
+            .await
+            .unwrap();
+
+        assert_eq!(postal_address.neighbourhood.as_ref().unwrap(), "قزل قلعه");
+        assert_eq!(postal_address.municipality_zone.as_ref().unwrap(), "6");
+        assert_eq!(postal_address.city, "تهران");
+
+        println!("{:?}", postal_address);
     }
 }
