@@ -89,7 +89,7 @@ impl Client {
         headers.insert("Api-Key", header::HeaderValue::from_str(api_key).unwrap());
 
         let client = reqwest::Client::builder()
-            .user_agent("khers")
+            .user_agent("neshan-rs")
             .default_headers(headers)
             .build()
             .unwrap();
