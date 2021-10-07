@@ -28,7 +28,7 @@ jobs:
       - name: run cargo test
         env:
           NESHAN_RS_API_KEY: ${{ secrets.API_KEY }}
-        run: cargo test
+        run: cargo test -- --nocapture
 
   release:
     name: release
